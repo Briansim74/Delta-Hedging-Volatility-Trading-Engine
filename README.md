@@ -1,3 +1,129 @@
+## Overview
+This project implements an automated delta-hedged replicating portfolio for a short European call option on NVDA. The system dynamically rebalances exposure in the underlying asset and risk-free asset to replicate the option payoff and evaluate hedging performance under continuously changing market conditions.
+
+## Core Idea
+The system implements a dynamic replicating portfolio for a short European call option on NVDA. The position is delta-hedged using the Black-Scholes-Merton framework, with continuous rebalancing of the underlying and cash positions.
+
+This setup is used to evaluate how delta hedging performs under discrete-time execution, market noise, and evolving option sensitivities in real trading conditions.
+
+The structure reflects a volatility-selling approach commonly used in market making, where option premium is collected while directional exposure is continuously managed through hedging in the underlying asset.
+
+### Short Call Rationale and Volatility Exposure
+The decision to short the call option is based on the structured payoff characteristics of options and the decomposition of risk into delta, gamma, vega, and theta components.
+
+By shorting the call, the portfolio:
+- Gains positive theta exposure, benefiting from time decay as the option approaches maturity
+- Assumes short gamma exposure, meaning the portfolio benefits from low volatility regimes but is exposed to convex losses during large price movements
+- Assumes short vega exposure, where declines in implied volatility result in portfolio gains
+
+This structure reflects a common market-making perspective, where options are sold to collect premium (theta), while risk is managed through dynamic delta hedging in the underlying asset.
+
+### Hedging Objective
+The system focuses on understanding the behavior of a short volatility position under dynamic hedging, rather than directional exposure to NVDA.
+
+In particular, it highlights:
+- How effectively delta hedging neutralizes directional risk in practice
+- How theta decay interacts with gamma-driven hedging adjustments
+- How continuous-time replication assumptions break down under real market dynamics
+
+The portfolio is constructed as a self-financing system that continuously offsets changes in option value through adjustments in the underlying exposure.
+### Hedging Mechanism
+At each discrete time step, the system implements a delta hedging procedure to replicate the short option exposure:
+- Computes option Greeks (primarily delta) using the Black-Scholes-Merton framework
+- Rebalances the underlying position to match current delta exposure
+- Adjusts the cash position to enforce a self-financing portfolio constraint
+- Tracks portfolio value evolution and hedging performance over time
+
+This process forms a discrete-time approximation of a continuous-time delta hedging strategy, capturing the hedging error introduced by discrete rebalancing and real market dynamics.
+
+### Model Assumptions
+1. The NVDA option contract is assumed to have a contract multiplier of 1 share per option for simplicity of replication.
+2. The option is treated as a European-style call option.
+3. Markets are assumed to allow frictionless trading (no transaction costs or slippage in the model).
+4. Continuous dividends are approximated via observed dividend yield.
+
+## Delta Hedging Framework
+The replicating portfolio is constructed as:
+- Short 1 NVDA European call option
+- Long Δ shares of NVDA (dynamic)
+- Cash position adjusted via risk-free borrowing / lending
+
+Where:
+- Δ is computed using the Black-Scholes-Merton model
+- Rebalancing occurs at fixed discrete intervals
+- Portfolio is maintained under self-financing constraints
+
+The hedging error arises from:
+- Discrete rebalancing frequency
+- Non-linear gamma exposure
+- Volatility misestimation
+- Market microstructure noise (simulated via real market data feeds)
+
+## System Architecture
+### Real-Time Market Data Pipeline
+Market data is retrieved using automated web scraping from Yahoo Finance, capturing underlying price, option price, and implied parameters.
+
+### Option Pricing & Greeks Engine
+Black-Scholes-Merton framework is used to compute option price and sensitivities, including delta and implied volatility estimation.
+
+### Dynamic Hedging Engine
+At each iteration, the system recalculates delta exposure and adjusts the underlying position accordingly to maintain hedging neutrality.
+
+### Portfolio Accounting System
+Tracks:
+- Underlying exposure
+- Borrowing/lending from risk-free asset
+- Option valuation
+- Hedging PnL decomposition
+
+### Automated Execution Layer
+System is deployed on a scheduled pipeline using Linux Cron jobs, enabling periodic recalculation and rebalancing of the hedge.
+
+## Automation & Data Pipeline
+The system is fully automated using a scheduled execution framework:
+- Selenium-based data extraction from Yahoo Finance
+- Python-based computation of Greeks and portfolio state
+- SQL-based persistence layer (Azure SQL Database)
+- Cron-based scheduling for periodic execution
+- BCP utility for efficient batch updates
+
+The pipeline enables near real-time recalculation of hedge ratios and portfolio PnL under evolving market conditions.
+
+## Key Insights
+### 1. Discrete Hedging Introduces Structural PnL Noise
+- Even though delta hedging is theoretically risk-neutral under continuous rebalancing, discrete execution introduces unavoidable PnL fluctuations.
+- This effect becomes more pronounced in high gamma regimes where delta changes rapidly.
+
+### 2. Gamma Risk Becomes Dominant Near Maturity
+- As option maturity approaches, gamma increases significantly, causing sharp adjustments in hedge ratios.
+- This leads to higher sensitivity to timing and rebalancing frequency.
+
+### 3. Financing Assumptions Impact Realized PnL
+- Small changes in the risk-free rate assumption introduce drift into the replicating portfolio, which compounds over time and affects final PnL outcomes.
+
+### 4. Hedging Performance is Path-Dependent
+- Final PnL depends heavily on the realized price path of the underlying asset, reinforcing that replication quality cannot be assessed in a static framework.
+
+## Summary
+This project implements a dynamic delta-hedged replicating portfolio to study the practical limitations of continuous-time hedging theory under discrete execution constraints.
+
+It demonstrates how:
+- Theoretical no-arbitrage replication deviates in practice
+- Hedging error emerges from discretization and volatility dynamics
+- Real-world implementation requires integration of pricing, data, and execution systems
+
+## Real-Time Delta Hedging Simulation Output
+
+<img width="500" height="511" alt="Real-Time Delta Hedging Simulation Output" src="Bash Shell Window of Yahoo Script.jpg" />
+
+Live output of the automated delta hedging system showing portfolio state updates, including dynamic delta recalculation, underlying rebalancing, and real-time PnL tracking under discrete-time hedging.
+
+</br></br></br></br>
+
+
+<details>
+<summary><strong>Detailed Implementation & Usage</strong></summary>
+
 # Automated-Delta-Hedging-Replicating-Portfolio
 
 In this notebook, I will describe the processes of creating an Automated Delta Hedging Replicating Portfolio of shorting an NVDA European call option by trading in the underlying stock and bank account. The portfolio strategy I am attempting to create would be a short gamma / short vega / receiving theta portfolio. 
@@ -138,3 +264,6 @@ As shown above, if there was no hedging, the current profit of the portfolio aft
 The current profit can be then analysed and set to automatically close this position once it reaches above a certain threshold (Eg. profit >= $12.00)
 
 Finally, the automation of the Web Scraping Script can be seen by the updating of the Azure SQL database every 5 minutes by quering the Security Wise Holdings SQL Table from the Microsoft Azure Portal, preferably set to operating during the trading hours of the US stock market (9:30am to 4:00pm GMT-04).
+
+</details>
+</br></br>
