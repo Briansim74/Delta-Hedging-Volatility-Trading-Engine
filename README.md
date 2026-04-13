@@ -1,3 +1,6 @@
+# Delta Hedging Volatility Trading Engine (Python / SQL)
+Dynamic options replication system implementing delta hedging for short volatility strategies, with real-time rebalancing, PnL decomposition, and analysis of hedging performance under discrete execution and changing market conditions.
+
 ## Overview
 This project implements an automated delta-hedged replicating portfolio for a short European call option on NVDA. The system dynamically rebalances exposure in the underlying asset and risk-free asset to replicate the option payoff and evaluate hedging performance under continuously changing market conditions.
 
