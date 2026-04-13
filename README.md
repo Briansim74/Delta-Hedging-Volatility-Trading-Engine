@@ -1,4 +1,4 @@
-# Delta Hedging Volatility Trading Simulator
+# Delta Hedging & Volatility Trading Simulator
 A simulation of a short volatility position using dynamic delta hedging.
 
 Used to study breakdowns in theoretical replication under discrete rebalancing.
