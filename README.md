@@ -1,3 +1,56 @@
+# Delta Hedgding Volatility Trading Simulator
+A simulation of a short volatility position using dynamic delta hedging.
+
+Used to study breakdowns in theoretical replication under discrete rebalancing.
+
+## Core Idea
+A short option position is dynamically hedged using delta replication.
+
+The system isolates:
+
+    How PnL emerges from volatility, gamma exposure, and hedging error
+
+## Why this matters
+This reflects volatility trading / market making intuition:
+- Theta capture vs gamma risk trade-off
+- Imperfect hedging in discrete time
+- Sensitivity to volatility regime shifts
+
+## Strategy Structure
+- Short European call (NVDA)
+- Dynamic delta hedge
+- Self-financing portfolio
+- Discrete-time rebalancing
+
+## Key Mechanics
+- Black-Scholes delta computation
+- Periodic hedge rebalancing
+- PnL decomposition (theta / gamma / vega effects)
+- Simulation of hedging error under discrete execution
+
+## Key Insights
+- Discrete hedging creates structural PnL noise
+- Gamma dominates near expiry
+- Volatility mismatch drives long-run PnL
+- “Neutral” portfolios are not risk-neutral in practice
+
+## Trading Interpretation
+This models:
+- Short volatility positioning
+- Delta-hedged market making behavior
+- Gamma risk management
+- Hedging error in real execution
+
+## Core Insight
+Hedging removes directional exposure, not risk.
+
+</br></br></br></br>
+
+
+<details>
+<summary><strong>Detailed Implementation & Usage</strong></summary>
+
+
 # Delta Hedging Volatility Trading Engine (Python / SQL)
 Dynamic options replication system implementing delta hedging for short volatility strategies, with real-time rebalancing, PnL decomposition, and analysis of hedging performance under discrete execution and changing market conditions.
 
@@ -267,6 +320,9 @@ As shown above, if there was no hedging, the current profit of the portfolio aft
 The current profit can be then analysed and set to automatically close this position once it reaches above a certain threshold (Eg. profit >= $12.00)
 
 Finally, the automation of the Web Scraping Script can be seen by the updating of the Azure SQL database every 5 minutes by quering the Security Wise Holdings SQL Table from the Microsoft Azure Portal, preferably set to operating during the trading hours of the US stock market (9:30am to 4:00pm GMT-04).
+
+</details>
+</br></br>
 
 </details>
 </br></br>
