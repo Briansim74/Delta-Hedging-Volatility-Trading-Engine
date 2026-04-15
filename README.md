@@ -1,52 +1,89 @@
 # Delta Hedging & Volatility Trading Simulator
-A simulation of a short volatility position using dynamic delta hedging.
+A dynamic delta hedging system for a short NVDA European call option, modeling volatility exposure, gamma risk, and hedging performance under discrete-time rebalancing.
 
-Used to study breakdowns in theoretical replication under discrete rebalancing.
+The system replicates option exposure using the underlying asset and cash, continuously adjusting delta to maintain a delta-neutral portfolio under real market conditions.
 
 ## Core Idea
-A short option position is dynamically hedged using delta replication.
+The project implements a short volatility trading framework, where option exposure is managed through dynamic hedging in the underlying.
 
-The system isolates:
+The goal is to evaluate:
+- How well delta hedging replicates option exposure in practice
+- How volatility and gamma risk evolve under discrete rebalancing
+- How hedging error contributes to realized PnL
 
-    How PnL emerges from volatility, gamma exposure, and hedging error
+## Strategy (Short Volatility Exposure)
+The portfolio is structured as a short call position:
+- Short gamma → exposure to convex losses during large price moves
+- Short vega → benefits from volatility compression
+- Long theta → captures time decay
 
-## Why this matters
-This reflects volatility trading / market making intuition:
-- Theta capture vs gamma risk trade-off
-- Imperfect hedging in discrete time
-- Sensitivity to volatility regime shifts
+This reflects a volatility risk premium strategy, where returns come from option selling while directional exposure is dynamically hedged.
 
-## Strategy Structure
-- Short European call (NVDA)
-- Dynamic delta hedge
-- Self-financing portfolio
-- Discrete-time rebalancing
+## Hedging Framework
+At each time step:
+- Compute option delta using Black-Scholes-Merton
+- Rebalance underlying position to maintain delta neutrality
+- Adjust cash position under a self-financing constraint
+- Track portfolio value and PnL evolution
 
-## Key Mechanics
-- Black-Scholes delta computation
-- Periodic hedge rebalancing
-- PnL decomposition (theta / gamma / vega effects)
-- Simulation of hedging error under discrete execution
+This approximates a continuous-time hedging strategy using discrete execution intervals, introducing realistic replication error.
+
+## Key Components
+### Market Data Layer
+- Automated NVDA stock and option data ingestion
+- Real-time update of underlying price and option parameters
+### Pricing Engine
+- Black-Scholes-Merton option pricing model
+- Greeks computation (delta-focused hedging logic)
+- Volatility and interest rate inputs
+### Delta Hedging Engine
+- Continuous recalculation of hedge ratio
+- Dynamic adjustment of underlying exposure
+- Self-financing portfolio constraint enforcement
+### Portfolio Accounting System
+- Real-time PnL tracking
+- Exposure decomposition (delta / gamma / vega effects)
+- Funding and cash position updates
+### Execution Layer
+- Cron-based scheduled rebalancing
+- Discrete-time hedge updates simulating execution intervals
+### Data Persistence Layer
+- Azure SQL database for portfolio state tracking
+- Historical storage of hedging performance and exposures
 
 ## Key Insights
-- Discrete hedging creates structural PnL noise
-- Gamma dominates near expiry
-- Volatility mismatch drives long-run PnL
-- “Neutral” portfolios are not risk-neutral in practice
+### 1. Discrete hedging introduces structural replication error
+Continuous-time hedging assumptions break down under real execution intervals, creating persistent PnL noise.
+
+### 2. Gamma risk dominates near maturity
+As expiration approaches, gamma increases sharply, leading to unstable hedge ratios and higher sensitivity to timing.
+
+### 3. Volatility assumptions are primary PnL drivers
+Misestimation of implied or realized volatility significantly impacts hedging effectiveness and final PnL.
+
+### 4. Hedging PnL is path-dependent
+Final outcomes depend on the realized price trajectory, not just initial conditions or model assumptions.
 
 ## Trading Interpretation
-This models:
-- Short volatility positioning
-- Delta-hedged market making behavior
-- Gamma risk management
-- Hedging error in real execution
+This system models core mechanics of:
+- Short volatility trading strategies
+- Market making with dynamic delta hedging
+- Gamma risk management under real execution constraints
+- Replication error in options hedging systems
 
-## Core Insight
-Hedging removes directional exposure, not risk.
+## System Insight
+Delta hedging neutralizes directional exposure, but does not eliminate risk — realized PnL is driven by volatility, gamma exposure, and discrete execution effects.
 
-</br></br></br></br>
+## Summary
+This project demonstrates how theoretical delta-hedging replication breaks down in practice due to:
+- Discrete rebalancing
+- Volatility dynamics
+- Gamma exposure
+- Execution timing constraints
 
+It provides a practical view of how short-volatility strategies behave under real market conditions.
 
+<br><br><br><br>
 <details>
 <summary><strong>Detailed Implementation & Usage</strong></summary>
 
