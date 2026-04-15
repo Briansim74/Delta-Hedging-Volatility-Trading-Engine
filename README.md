@@ -1,15 +1,15 @@
 # Delta Hedging & Volatility Trading Simulator
-A dynamic delta hedging system for a short NVDA European call option, modeling volatility exposure, gamma risk, and hedging performance under discrete-time rebalancing.
 
-The system replicates option exposure using the underlying asset and cash, continuously adjusting delta to maintain a delta-neutral portfolio under real market conditions.
+## Trading Problem
+Short volatility strategies depend on managing gamma risk under imperfect replication and discrete execution.
 
 ## Core Idea
-The project implements a short volatility trading framework, where option exposure is managed through dynamic hedging in the underlying.
+A short call option position is dynamically hedged using delta replication to study:
 
-The goal is to evaluate:
-- How well delta hedging replicates option exposure in practice
-- How volatility and gamma risk evolve under discrete rebalancing
-- How hedging error contributes to realized PnL
+hedging error
+gamma exposure
+volatility sensitivity
+PnL path dependence
 
 ## Strategy (Short Volatility Exposure)
 The portfolio is structured as a short call position:
@@ -27,61 +27,21 @@ At each time step:
 - Track portfolio value and PnL evolution
 
 This approximates a continuous-time hedging strategy using discrete execution intervals, introducing realistic replication error.
-
-## Key Components
-### Market Data Layer
-- Automated NVDA stock and option data ingestion
-- Real-time update of underlying price and option parameters
-### Pricing Engine
-- Black-Scholes-Merton option pricing model
-- Greeks computation (delta-focused hedging logic)
-- Volatility and interest rate inputs
-### Delta Hedging Engine
-- Continuous recalculation of hedge ratio
-- Dynamic adjustment of underlying exposure
-- Self-financing portfolio constraint enforcement
-### Portfolio Accounting System
-- Real-time PnL tracking
-- Exposure decomposition (delta / gamma / vega effects)
-- Funding and cash position updates
-### Execution Layer
-- Cron-based scheduled rebalancing
-- Discrete-time hedge updates simulating execution intervals
-### Data Persistence Layer
-- Azure SQL database for portfolio state tracking
-- Historical storage of hedging performance and exposures
+## Trading Mapping
+This replicates:
+- Market making with dynamic hedging
+- Short volatility exposure
+- Gamma risk management
+- Execution-constrained replication
 
 ## Key Insights
-### 1. Discrete hedging introduces structural replication error
-Continuous-time hedging assumptions break down under real execution intervals, creating persistent PnL noise.
+- Discrete hedging introduces structural replication error
+- Gamma risk dominates near expiry
+- Volatility mis-specification is a primary PnL driver
+- PnL is path-dependent, not state-dependent
 
-### 2. Gamma risk dominates near maturity
-As expiration approaches, gamma increases sharply, leading to unstable hedge ratios and higher sensitivity to timing.
-
-### 3. Volatility assumptions are primary PnL drivers
-Misestimation of implied or realized volatility significantly impacts hedging effectiveness and final PnL.
-
-### 4. Hedging PnL is path-dependent
-Final outcomes depend on the realized price trajectory, not just initial conditions or model assumptions.
-
-## Trading Interpretation
-This system models core mechanics of:
-- Short volatility trading strategies
-- Market making with dynamic delta hedging
-- Gamma risk management under real execution constraints
-- Replication error in options hedging systems
-
-## System Insight
-Delta hedging neutralizes directional exposure, but does not eliminate risk — realized PnL is driven by volatility, gamma exposure, and discrete execution effects.
-
-## Summary
-This project demonstrates how theoretical delta-hedging replication breaks down in practice due to:
-- Discrete rebalancing
-- Volatility dynamics
-- Gamma exposure
-- Execution timing constraints
-
-It provides a practical view of how short-volatility strategies behave under real market conditions.
+## Core Takeaway
+Delta hedging removes directional exposure but does not eliminate risk.
 
 <br><br><br><br>
 <details>
