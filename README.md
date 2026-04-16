@@ -1,47 +1,46 @@
 # Delta Hedging & Volatility Trading Simulator
 
 ## Trading Problem
-Short volatility strategies depend on managing gamma risk under imperfect replication and discrete execution.
+Short volatility exposure requires managing gamma risk under discrete hedging conditions, where replication is imperfect.
 
 ## Core Idea
-A short call option position is dynamically hedged using delta replication to study:
+A short option position is dynamically delta-hedged using Black-Scholes Greeks to approximate continuous replication.
 
-hedging error
-gamma exposure
-volatility sensitivity
-PnL path dependence
+The simulation focuses on how hedging frequency and volatility estimation impact PnL outcomes.
 
 ## Strategy (Short Volatility Exposure)
-The portfolio is structured as a short call position:
-- Short gamma → exposure to convex losses during large price moves
-- Short vega → benefits from volatility compression
-- Long theta → captures time decay
+The position reflects standard short vol exposures:
+- Short gamma → losses from large directional moves
+- Short vega → sensitivity to volatility changes
+- Long theta → time decay benefit
 
-This reflects a volatility risk premium strategy, where returns come from option selling while directional exposure is dynamically hedged.
+PnL is driven by the interaction between:
+- Spot movement
+- Gamma exposure
+- Discrete hedging adjustments
 
-## Hedging Framework
+## Hedging Mechanics
 At each time step:
-- Compute option delta using Black-Scholes-Merton
+- Compute option delta (Black-Scholes-Merton)
 - Rebalance underlying position to maintain delta neutrality
-- Adjust cash position under a self-financing constraint
-- Track portfolio value and PnL evolution
+- Track cash + financing cost
+- Update portfolio value under self-financing constraint
 
-This approximates a continuous-time hedging strategy using discrete execution intervals, introducing realistic replication error.
 ## Trading Mapping
 This replicates:
-- Market making with dynamic hedging
-- Short volatility exposure
-- Gamma risk management
-- Execution-constrained replication
+- Dynamic hedging of short option exposure
+- Real-world gamma risk under imperfect replication
+- Volatility mispricing impact on PnL
+- Execution friction from discrete rebalancing
 
 ## Key Insights
-- Discrete hedging introduces structural replication error
-- Gamma risk dominates near expiry
-- Volatility mis-specification is a primary PnL driver
-- PnL is path-dependent, not state-dependent
+- Discrete hedging creates unavoidable replication error
+- Gamma dominates PnL near expiry and during large moves
+- Volatility mis-specification is the main driver of PnL deviation
+- Option PnL is path-dependent rather than mark-to-model static
 
 ## Core Takeaway
-Delta hedging removes directional exposure but does not eliminate risk.
+Delta hedging reduces directional exposure, but does not eliminate volatility-driven PnL risk under discrete execution
 
 <br><br><br><br>
 <details>
