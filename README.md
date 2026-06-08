@@ -1,5 +1,9 @@
 # Delta Hedging & Volatility Trading Simulator
 
+## Summary
+This simulation demonstrates that short-vol strategies are fundamentally regime-dependent: 
+- even low total price movement can generate gamma-dominated PnL when volatility is clustered and path-dependent.
+
 ## Trading Problem
 Short volatility exposure requires managing gamma risk under discrete hedging conditions, where replication is imperfect.
 
@@ -33,14 +37,70 @@ This replicates:
 - Volatility mispricing impact on PnL
 - Execution friction from discrete rebalancing
 
+## Empirical Findings
+### 1. Intraday Regime Was Not Low-Volatility
+Although NVDA may appear low-vol on aggregated metrics, the intraday path reveals a different structure:
+- Price range: ~132.4 → ~134.5 (~1.6%)
+- Multiple intraday reversals (directional switching rather than smooth drift)
+- Repeated short-horizon swings of ~0.3–0.7 in option value
+
+This indicates a micro-oscillation regime, not a stable low-vol environment.
+
+Even with a small total move, the path structure introduced significant gamma exposure.
+
+### 2. PnL Was Gamma-Dominated, Not Theta-Dominated
+The strategy was designed as a short volatility / short theta position, but realized PnL dynamics show otherwise:
+- Option value exhibited repeated spikes and reversals (e.g., +0.40 → +0.65 → +0.74 → mean reversion)
+- These swings were driven by spot curvature rather than time decay
+- Mark-to-market variability consistently exceeded expected theta accrual
+
+As a result:
+- |Gamma PnL| > |Theta PnL| for most of the active session
+
+
+The portfolio behaved more like a short gamma exposure under discrete hedging, rather than a steady theta harvest strategy.
+
+### 3. Theta Was Real but Regime-Dependent
+Theta decay was observable, but only in a constrained market regime:
+- After ~16:00:
+- Underlying stabilized (~132.76)
+- Option value converged (~10.94)
+- Residuals collapsed (~+0.037 and stable)
+
+This represents a clean theta decay environment:- 
+- Flat spot
+- Low realized volatility
+- Minimal hedging friction
+
+Outside this window, theta was structurally overwhelmed by intraday convexity effects.
+
+### 4. Volatility Was Mischaracterized by Average Range Metrics
+
+While total movement appeared small (~1–2%), the key driver was vol-of-vol, not level of volatility:
+- Rapid reversals created high convexity risk
+- Volatility was clustered rather than evenly distributed
+- Short bursts of movement dominated PnL outcomes
+
+This implies:
+- Low average realized volatility ≠ low option risk
+
 ## Key Insights
-- Discrete hedging creates unavoidable replication error
-- Gamma dominates PnL near expiry and during large moves
-- Volatility mis-specification is the main driver of PnL deviation
-- Option PnL is path-dependent rather than mark-to-model static
+The key issue was not model correctness (Black-Scholes hedging framework), but regime misclassification:
+- Assumption: low realized volatility → stable theta capture
+- Reality: low drift, high intraday curvature environment
+
+This distinction is critical:
+- Theta accrues linearly
+- Gamma losses arrive non-linearly in bursts
+- Discrete hedging amplifies this mismatch
 
 ## Core Takeaway
-Delta hedging reduces directional exposure, but does not eliminate volatility-driven PnL risk under discrete execution
+Delta hedging reduces directional exposure but does not eliminate path-dependent risk.
+
+In this dataset:
+- The strategy was not primarily a theta harvest
+- It was effectively exposed to short gamma under clustered volatility
+- Profitability depended heavily on market regime timing rather than static model expectations
 
 <br><br><br><br>
 <details>
